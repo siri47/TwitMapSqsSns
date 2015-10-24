@@ -41,7 +41,7 @@ var category=undefined;
 
 sportsBag=['sports', 'football', 'sport', 'volleyball', 'basketball', 'cricket', 'golf', 'baseball', 'soccer', 'championship', 'manchester united', 'mufc', 'lpfc', 'winning', 'battle', 'losing', 'badminton', 'olympics', 'running', 'wrestling', 'boxing', 'athletics', 'energy', 'world cup', 'champions league', 'league', 'barclays ', 'premier', 'serie a', 'training', 'fitness', 'laliga', 'handball', 'liverpool', 'chelsea', 'arsenal', 'real madrid', 'atheletico madrid'];
 
-technologyBag=['apple', 'android', 'samsung', 'youtube', 'nexus', 'computer', 'science', 'web', 'server', 'device', 'phone', 'laptop', 'satellite','technology', 'nasa', 'space', 'mars', 'rocket', 'microsoft', 'intel', 'tablet', 'wifi', 'network', 'internet', 'google', 'database', 'big data', 'software', 'hardware', 'machine', 'data centre', 'data science', 'stephen hawkins', 'node', 'facebook'];
+technologyBag=['apple', 'android', 'samsung', 'youtube', 'nexus', 'computer', 'science', 'web', 'server', 'device', 'phone', 'laptop', 'satellite','technology', 'nasa', 'space', 'mars', 'rocket', 'microsoft', 'intel', 'tablet', 'network', 'internet', 'google', 'database', 'big data', 'software', 'hardware', 'machine', 'data centre', 'data science', 'stephen hawkins', 'node', 'facebook'];
 
 moviesBag=['movie', 'movies', 'hollywood', 'kollywood', 'bollywood', 'hugh jackman', 'game of thrones', 'natalie portman', 'jennifer lawrence', 'jennifer aniston', 'kate winslet', 'leornado di caprio', 'grammy', 'oscar', 'hans jimmer', 'cinema', 'cinematography', 'christopher nolan', 'woody allen', 'trailer', 'action ', 'comedy', 'romcom', 'tragedy', 'tom hanks', 'jimmy fallon', 'tom cruise', 'snl', 'blockbuster', 'opening night', 'theatre', 'musical'];
 
