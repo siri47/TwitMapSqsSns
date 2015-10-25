@@ -1,6 +1,7 @@
 var Tweet = require('./../models/tweets');
 var mongoose 	= require('mongoose');
 var Geo = require('./../models/geo');
+var path = require('path');
 
 
 
@@ -61,7 +62,9 @@ module.exports = function(app) {
     });
     
     //For all others serve the html page
-app.get('/',function(req,res,next){    res.sendFile("./public/chk.html");
+app.get('/',function(req,res,next){    
+    res.json({'asf':'qwerty'});
+    //res.sendFile("chk.html",{ root: path.join(__dirname, '../public') });
     });
     
 };

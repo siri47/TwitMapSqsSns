@@ -44,7 +44,7 @@ heatmap = new google.maps.visualization.HeatmapLayer({
 if(io !== undefined) {
     console.log("\nhi begin");
     // Storage for WebSocket connections
-    var socket = io.connect('http://localhost:8080/');
+    var socket = io.connect('/');
     //var use = socket.socket;
     // This listens on the "twitter-steam" channel and data is 
     // received everytime a new tweet is receieved.
