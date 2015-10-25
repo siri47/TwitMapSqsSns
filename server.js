@@ -19,9 +19,11 @@ var mongoose   = require('mongoose');
 var http = require('http');
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 8081;        // set our port
 var database = require('./app/config/database');
 var db = mongoose.connect(database.url);	
+var AlchemyAPI = require('./app/alchemy/alchemyapi');
+var alchemyapi = new AlchemyAPI();
 
 //--------------
 // START THE SERVER
@@ -52,9 +54,14 @@ politicsBag=['politics', 'democracy', 'democrat', 'vote', 'campaign', 'governor'
 //---------------------
 
 function runForCategory() {
-    
+var count={};
+count["sports"]=0;
+count["politics"]=0;
+count["technology"]=0;
+count["movie"]=0;
 var t = require('./app/models/tweets');
 var geoSpecific = require('./app/models/geo');
+var Trend = require('./app/models/trend');
 var twitt = require('twit'),
 twitter = new twitt({consumer_key: 'w6hHJEscClitn7VNY59n086Wk',               consumer_secret:'IpGHYeSghW7YOkYHg1fhr8nau0uNoIi70nRByeaKfh0121m7zm',
 access_token: '218786916-aW57bL8LW2JkS3psB5ChOH8j6xC7dO6LQOID11oU',	
@@ -67,6 +74,12 @@ stream.on('tweet', function(tweet){
     var s3=0;
     var s4=0;
     var matches = [];
+    
+    var re = /(?:^|\W)#(\w+)(?!\w)/g, match, matches1 = [];
+    while (match = re.exec(tweet.text)) {
+        matches1.push(match[1]);
+    }
+    
     for (i in sportsBag){
         if (tweet.text.toLowerCase().search(sportsBag[i]) >=0){
             s1=s1+1;
@@ -103,6 +116,7 @@ stream.on('tweet', function(tweet){
             category="technology";
 
         if (tweet.geo!=null){
+                count[category]+=1;            
                 tweet['category'] = category;
                 tweet['timestamp'] = new Date();
                 var data = {
@@ -126,14 +140,70 @@ stream.on('tweet', function(tweet){
                 var outputPoint = {"lat":tweet['geo']['coordinates']['0'],"lng": tweet['geo']['coordinates']['1']};
                 io.sockets.emit('twitter-stream', {geo:outputPoint,cat:category}); 
 
-
+            if(count[category]==5 && category!="movie"){
+                count[category]=0;
+                getTweets(category);
+            }
         }
     }
 });
+
+var Str='';
+function getTweets(cat){
+    console.log("getTweets"+ cat);
+    t.find({category:cat}, function(err,data) {  
+    if (err) {
+				console.log(err);
+    }
+    Str='';
+    for ( i in data){ 
+            Str=Str+' '+(data[i].toObject()['text']);
+    }
+            //console.log(Str);
+    entities(Str,cat);
+    });       
+};
+
+function entities(Str,cat){
+    var output={};
+    //console.log(Str);
+	alchemyapi.entities('text', Str,{ 'sentiment':1 },           function(response) {
+    output['entities'] = { text:Str,    response:JSON.stringify(response,null,5),               results:response['entities'] };
+    console.log(response['entities']);
+    response['entities'].sort(function(a, b) {
+    return parseFloat(b.count) - parseFloat(a.count);
+});
+for (j=0 ; j<10;j++){
+    if(response['entities'][j]['type']!='City'){
+    //console.log(response['entities'][j]['text']);//}  
+
+var dbVal =
+     {
+                    category : cat,
+                    trend : response['entities'][j]['text'],
+                    senti : response['entities'][j]['sentiment']['type'],
+     };
+        Trend.remove({'category':cat}, function(err){
+                    if(!err){
+                        
+                        console.log("success");
+                    }    
+        });
+        Trend.create(dbVal, function(err){
+                    if(err){
+                        console.log(err);
+                    }                    
+                });
+        } //if
+    } //for
+    });
+}   
+    
+    
+    
 };
           //  socket.emit('twitter-stream', {geo:outputPoint,cat:globalCategory});
 //    socket.emit("connected");
-
 
 
     

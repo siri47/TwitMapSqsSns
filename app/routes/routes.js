@@ -61,7 +61,7 @@ module.exports = function(app) {
     });
     
     //For all others serve the html page
-app.get('/',function(req,res,next){    res.sendFile("/Users/kavyapremkumar/Documents/MyNodeApp/public/chk.html");
+app.get('/',function(req,res,next){    res.sendFile("/Users/kavyapremkumar/Documents/TwitMap/public/chk.html");
     });
     
 };

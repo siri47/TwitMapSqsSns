@@ -91,6 +91,8 @@ $.get("/api/getAllTweets/"+category,function(data, status){
     google.maps.event.addDomListener(window, 'load', heatMapInitialize());
 });
     
+    
+
 
 };
 
