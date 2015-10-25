@@ -63,8 +63,7 @@ module.exports = function(app) {
     
     //For all others serve the html page
 app.get('/',function(req,res,next){    
-    res.json({'asf':'qwerty'});
-    //res.sendFile("chk.html",{ root: path.join(__dirname, '../public') });
+    res.sendFile("chk.html",{ root: path.join(__dirname, '../public') });
     });
     
 };
