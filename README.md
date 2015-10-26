@@ -9,7 +9,7 @@ NodeJS is used for server side environment.
 server.js is the main server file.
 
 Frontend:
-HTML, CSS(Material Design Lite) and Java Script. 
+HTML, CSS(Material Design Lite) and Java Script.  
 
 Server is deployed on AWS Elastic Beanstalk.
 
@@ -62,5 +62,5 @@ Now go to your environment dashboard and access the web page by clicking the lin
 
 
 
-# Used one of the starting templates from Material Design Lite frameowork ( A CSS framework for material design by Google ).
+*Used one of the starting templates from Material Design Lite frameowork ( A CSS framework for material design by Google ).
 https://github.com/google/material-design-lite
