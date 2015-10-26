@@ -54,9 +54,9 @@ var t = require('./app/models/tweets');
 var geoSpecific = require('./app/models/geo');
 var Trend = require('./app/models/trend');
 var twitt = require('twit'),
-twitter = new twitt({consumer_key: 'w6hHJEscClitn7VNY59n086Wk',               consumer_secret:'IpGHYeSghW7YOkYHg1fhr8nau0uNoIi70nRByeaKfh0121m7zm',
-access_token: '218786916-aW57bL8LW2JkS3psB5ChOH8j6xC7dO6LQOID11oU',	
-access_token_secret: '4YdgpQ7Xdabsk42mQNDTrqkVbnyltoQjHUgIPGaKJJK93'
+twitter = new twitt({consumer_key: ''               consumer_secret:'',
+access_token: '',	
+access_token_secret: ''
 });
 var stream = twitter.stream('statuses/filter', {'locations':'-180,-90,180,90'})
 stream.on('tweet', function(tweet){
