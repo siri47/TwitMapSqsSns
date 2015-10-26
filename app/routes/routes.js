@@ -2,7 +2,7 @@ var Tweet = require('./../models/tweets');
 var mongoose 	= require('mongoose');
 var Geo = require('./../models/geo');
 var path = require('path');
-
+var Trend = require('./../models/trend');
 
 
 module.exports = function(app) {
@@ -61,9 +61,20 @@ module.exports = function(app) {
         });
     });
     
-    //For all others serve the html page
-app.get('/',function(req,res,next){    
-    res.sendFile("chk.html",{ root: path.join(__dirname, '/../../public') });
-    });
     
+    app.get('/api/getTrends/:category',function(req,res) {
+        Trend.find({category : req.params.category},{},function(err,data){
+            if(err){
+                res.send(err);
+            }
+            res.json(data);
+        });
+
+
+    });
+    //For all others serve the html page
+    app.get('/',function(req,res,next){    
+        res.sendFile("index.html",{ root: path.join(__dirname, '/../../public/dashboard') });
+    });
+        
 };

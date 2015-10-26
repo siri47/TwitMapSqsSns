@@ -5,7 +5,7 @@ function normalMapInitialize() {
         var mapOptions = {
           center: new google.maps.LatLng(0, 0),
           zoom: 2,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          mapTypeId: google.maps.MapTypeId.SATELLITE
         }
         var map = new google.maps.Map(mapCanvas, mapOptions)
 };
@@ -18,9 +18,9 @@ var pointArray = new google.maps.MVCArray();
 function heatMapInitialize() {
   // the map's options
   var mapOptions = {
-    zoom: 2,
+    zoom: 1,
     center: new google.maps.LatLng(0,0),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.SATELLITE
   };
   // the map and where to place it
 map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -74,10 +74,10 @@ if(io !== undefined) {
 };
 
 category="sports";
-function temp() { 
+function temp(category) { 
     
 //pointArray=[]
-category = document.getElementById('keywords').value;  
+//category = document.getElementById('keywords').value;  
 $.get("/api/getAllTweets/"+category,function(data, status){
     pointArray = [];
     for (i in data){
@@ -85,10 +85,31 @@ $.get("/api/getAllTweets/"+category,function(data, status){
     var tweetLocation = new google.maps.LatLng(data[i]['geo']['coordinates']['0'],data[i]['geo']['coordinates']['1']);
         //console.log(tweetLocation);
         pointArray.push(tweetLocation);
-        //console.log(pointArray);
     }
+        google.maps.event.addDomListener(window, 'load', heatMapInitialize());
+});
+        //console.log(pointArray);
+var trends=[]
+var sentiment=[]
+var mydiv=document.getElementById('trending');
+var newcontent = document.createElement('div');
+mydiv.innerHTML='';
+$.get("/api/getTrends/"+category,function(data,status){
+    console.log(data);
+      for (i in data){
+          console.log(data[i]);
+        trends[i]= data[i]['trend'];
+        sentiment[i]=data[i]['senti'];
+        if (trends[i].length<2) continue;
+        newcontent.innerHTML = "<b>"+trends[i]+"</b><br/><i> "+sentiment[i]+"</i><br><hr>";
+        while (newcontent.firstChild) {
+        mydiv.appendChild(newcontent.firstChild);
+    }
+}
+
+
     
-    google.maps.event.addDomListener(window, 'load', heatMapInitialize());
+
 });
     
     

@@ -3,17 +3,8 @@
 // BASE SETUP
 // =============================================================================
 
-// call the packages we need
-//1. make client side nicer, get trending
-//2. Get trends on servrer side - alchemy
-//3. get 100MB od twitter feed
-//4. Deploying on cloud
-//5. Check why its not adding to db
-//6. Check if marker points are getting added to heat map
-//var twitter = require('ntwitter'),
-//var streamHandler = require('./utils/streamHandler');
 var express    = require('express');        // call express
-var app        = express();                 // define our app using express
+var app        = express();         // define our app using express
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 var http = require('http');
@@ -41,13 +32,13 @@ app.use(express.static(__dirname + '/public'));
 require('./app/routes/routes.js')(app);
 var category=undefined;
 
-sportsBag=['sports', 'football', 'sport', 'volleyball', 'basketball', 'cricket', 'golf', 'baseball', 'soccer', 'championship', 'manchester united', 'mufc', 'lpfc', 'winning', 'battle', 'losing', 'badminton', 'olympics', 'running', 'wrestling', 'boxing', 'athletics', 'energy', 'world cup', 'champions league', 'league', 'barclays ', 'premier', 'serie a', 'training', 'fitness', 'laliga', 'handball', 'liverpool', 'chelsea', 'arsenal', 'real madrid', 'atheletico madrid'];
+sportsBag=['sports', 'football', 'sport', 'volleyball', 'basketball', 'cricket', 'golf', 'baseball', 'soccer', 'championship', 'manchester united', 'mufc', 'lpfc', 'badminton', 'olympics','wrestling', 'boxing', 'athletics', 'world cup', 'champions league', 'league', 'serie a', 'laliga', 'handball', 'liverpool', 'chelsea', 'arsenal', 'real madrid', 'atheletico madrid'];
 
-technologyBag=['apple', 'android', 'samsung', 'youtube', 'nexus', 'computer', 'science', 'web', 'server', 'device', 'phone', 'laptop', 'satellite','technology', 'nasa', 'space', 'mars', 'rocket', 'microsoft', 'intel', 'tablet', 'network', 'internet', 'google', 'database', 'big data', 'software', 'hardware', 'machine', 'data centre', 'data science', 'stephen hawkins', 'node', 'facebook'];
+technologyBag=['android', 'samsung', 'youtube', 'nexus', 'computer', 'science', 'device', 'phone', 'laptop', 'satellite','technology', 'nasa', 'rocket', 'microsoft', 'tablet', 'network', 'internet', 'google', 'database', 'big data', 'software', 'hardware', 'machine', 'data centre', 'data science', 'stephen hawkins','invention'];
 
-moviesBag=['movie', 'movies', 'hollywood', 'kollywood', 'bollywood', 'hugh jackman', 'game of thrones', 'natalie portman', 'jennifer lawrence', 'jennifer aniston', 'kate winslet', 'leornado di caprio', 'grammy', 'oscar', 'hans jimmer', 'cinema', 'cinematography', 'christopher nolan', 'woody allen', 'trailer', 'action ', 'comedy', 'romcom', 'tragedy', 'tom hanks', 'jimmy fallon', 'tom cruise', 'snl', 'blockbuster', 'opening night', 'theatre', 'musical'];
+moviesBag=['movie', 'movies', 'hollywood', 'kollywood', 'bollywood', 'hugh jackman', 'game of thrones', 'natalie portman', 'jennifer lawrence', 'jennifer aniston', 'kate winslet', 'leornado di caprio', 'grammy', 'oscar', 'hans jimmer', 'cinema', 'cinematography', 'christopher nolan', 'woody allen', 'trailer', 'action ', 'comedy', 'romcom', 'tragedy', 'tom hanks', 'jimmy fallon', 'tom cruise', 'snl', 'blockbuster', 'opening night', 'box office','theatre', 'musical'];
 
-politicsBag=['politics', 'democracy', 'democrat', 'vote', 'campaign', 'governor', 'mayor', 'governance', 'debate', 'trump', 'obama', 'michelle obama', 'barrack obama', 'white house', 'election', 'political', 'republic', 'republican', 'congressmen', 'congress', 'modi', 'narendra modi', 'bernie', 'hillary', 'clinton', 'president', 'prime minister', 'minister', 'legislature', 'donald trump', 'democratic', 'government', 'parliament', 'federal', 'judiciary', 'communism', 'dictator', 'bureaucracy'];
+politicsBag=['politics', 'democracy', 'democrat','vote', 'campaign', 'governor', 'mayor', 'governance', 'debate', 'trump', 'obama', 'michelle obama', 'barrack obama', 'white house', 'election', 'political', 'republic', 'republican', 'congressmen', 'congress', 'modi', 'narendra modi', 'bernie', 'hillary', 'clinton', 'president', 'prime minister', 'minister', 'legislature', 'donald trump', 'democratic', 'government', 'parliament', 'federal', 'judiciary', 'communism', 'dictator', 'bureaucracy'];
 
 
 //require('./twit.js')(db);
@@ -55,10 +46,10 @@ politicsBag=['politics', 'democracy', 'democrat', 'vote', 'campaign', 'governor'
 
 function runForCategory() {
 var count={};
-count["sports"]=0;
-count["politics"]=0;
-count["technology"]=0;
-count["movie"]=0;
+count["sports"]=25;
+count["politics"]=25;
+count["technology"]=25;
+count["movie"]=25;
 var t = require('./app/models/tweets');
 var geoSpecific = require('./app/models/geo');
 var Trend = require('./app/models/trend');
@@ -75,13 +66,14 @@ stream.on('tweet', function(tweet){
     var s4=0;
     var matches = [];
     
-    var re = /(?:^|\W)#(\w+)(?!\w)/g, match, matches1 = [];
+   // tweet.text=tweet.text.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    /*var re = /(?:^|\W)#(\w+)(?!\w)/g, match, matches1 = '';
     while (match = re.exec(tweet.text)) {
-        matches1.push(match[1]);
-    }
+        matches1+=' '+match[1]+' ';
+    }*/
     
     for (i in sportsBag){
-        if (tweet.text.toLowerCase().search(sportsBag[i]) >=0){
+        if (tweet.text.toLowerCase().search(' '+sportsBag[i]+' ') >=0){
             s1=s1+1;
             matches.push(sportsBag[i]);
         }
@@ -126,11 +118,11 @@ stream.on('tweet', function(tweet){
                     category : category,
                     };
                     console.log(category," :  ",matches, " - ",tweet.text);
-                    geoSpecific.create(data, function(err){
+                    /*geoSpecific.create(data, function(err){
                     if(err){
                         console.log(err);
                     }                    
-                });
+                });*/
                 t.create(tweet, function(err) {
                     if (err) {
                         console.log(err);
@@ -140,7 +132,7 @@ stream.on('tweet', function(tweet){
                 var outputPoint = {"lat":tweet['geo']['coordinates']['0'],"lng": tweet['geo']['coordinates']['1']};
                 io.sockets.emit('twitter-stream', {geo:outputPoint,cat:category}); 
 
-            if(count[category]==5 && category!="movie"){
+            if(count[category]== 30){
                 count[category]=0;
                 getTweets(category);
             }
@@ -151,7 +143,7 @@ stream.on('tweet', function(tweet){
 var Str='';
 function getTweets(cat){
     console.log("getTweets"+ cat);
-    t.find({category:cat}, function(err,data) {  
+    t.find({category:cat},{},{limit : 200}, function(err,data) {  
     if (err) {
 				console.log(err);
     }
@@ -166,35 +158,50 @@ function getTweets(cat){
 
 function entities(Str,cat){
     var output={};
-    //console.log(Str);
+    //Str=Str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
 	alchemyapi.entities('text', Str,{ 'sentiment':1 },           function(response) {
+        console.log('========================================');
+        console.log(response);
     output['entities'] = { text:Str,    response:JSON.stringify(response,null,5),               results:response['entities'] };
+    if (typeof(response['entities'])==="undefined" || response['entities'].length == 0){
+            console.log('------------------------------');
+            console.log(response);
+                return;
+    }
     console.log(response['entities']);
     response['entities'].sort(function(a, b) {
-    return parseFloat(b.count) - parseFloat(a.count);
-});
-for (j=0 ; j<10;j++){
-    if(response['entities'][j]['type']!='City'){
-    //console.log(response['entities'][j]['text']);//}  
-
-var dbVal =
-     {
+        return parseFloat(b.count) - parseFloat(a.count);
+    });
+    for (j=0 ; j<5 && j<response["entities"].length; j++){
+        console.log("=====",j);
+        var s='';
+        //if(response['entities'][j]['type']!='City'){
+        //console.log(response['entities'][j]['text']);//}  
+  if (typeof(response['entities'][j]['sentiment'])==="undefined"){
+                 s="neutral";
+             }
+                else{
+                s = response['entities'][j]['sentiment']['type'];
+                }
+            
+        var dbVal =
+             {
                     category : cat,
                     trend : response['entities'][j]['text'],
-                    senti : response['entities'][j]['sentiment']['type'],
-     };
-        Trend.remove({'category':cat}, function(err){
+                    senti : s
+             };
+            Trend.remove({'category':cat}, function(err){
                     if(!err){
                         
                         console.log("success");
                     }    
-        });
-        Trend.create(dbVal, function(err){
+            });
+            Trend.create(dbVal, function(err){
                     if(err){
                         console.log(err);
                     }                    
                 });
-        } //if
+        //} //if
     } //for
     });
 }   
