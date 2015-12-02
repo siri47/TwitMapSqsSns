@@ -5,8 +5,8 @@ var AWS = require('aws-sdk');
 var sns = new AWS.SNS(
     {
             region: 'us-east-1',//config.aws.region,
-    accessKeyId: 'AKIAJ6SNL5URRAILJOKQ',//config.aws.accessID,
-    secretAccessKey: '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',//config.aws.secretKey,
+    accessKeyId: '',//config.aws.accessID,
+    secretAccessKey: '',//config.aws.secretKey,
 
         params: {TopicArn: 'arn:aws:sns:us-east-1:202100215321:FirstTopic'}});
 
