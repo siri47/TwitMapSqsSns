@@ -2,12 +2,13 @@
   "name": "twitmap",
   "main": "server.js",
   "dependencies": {
+    "aws-snsclient": "^0.2.0",
     "body-parser": "~1.0.1",
     "express": "~4.8.0",
     "mongoose": "latest",
+    "sleep": "^3.0.0",
+    "socket.io": "*",
     "twit": "^2.1.0",
-    "twitter": "^1.2.5",
-    "socket.io": "*"
-
+    "twitter": "^1.2.5"
   }
 }

@@ -8,6 +8,9 @@ var app        = express();         // define our app using express
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 var http = require('http');
+var aws = require( "aws-sdk" );
+var Q = require( "q" );
+var chalk = require( "chalk" );
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var port = process.env.PORT || 8080;        // set our port
@@ -29,7 +32,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 // ROUTES FOR OUR API
-require('./app/routes/routes.js')(app);
+require('./app/routes/routes.js')(app,io);
 var category=undefined;
 
 sportsBag=['sports', 'football', 'sport', 'volleyball', 'basketball', 'cricket', 'golf', 'baseball', 'soccer', 'championship', 'manchester united', 'mufc', 'lpfc', 'badminton', 'olympics','wrestling', 'boxing', 'athletics', 'world cup', 'champions league', 'league', 'serie a', 'laliga', 'handball', 'liverpool', 'chelsea', 'arsenal', 'real madrid', 'atheletico madrid'];
@@ -52,11 +55,13 @@ count["technology"]=25;
 count["movie"]=25;
 var t = require('./app/models/tweets');
 var geoSpecific = require('./app/models/geo');
-var Trend = require('./app/models/trend');
+var Sentiment = require('./app/models/senti');
+var Trends= require('./app/models/trend');
 var twitt = require('twit'),
-twitter = new twitt({consumer_key: ''               consumer_secret:'',
-access_token: '',	
-access_token_secret: ''
+    
+twitter = new twitt({consumer_key: 'w6hHJEscClitn7VNY59n086Wk',              consumer_secret:'IpGHYeSghW7YOkYHg1fhr8nau0uNoIi70nRByeaKfh0121m7zm',
+access_token: '218786916-aW57bL8LW2JkS3psB5ChOH8j6xC7dO6LQOID11oU',	
+access_token_secret: '4YdgpQ7Xdabsk42mQNDTrqkVbnyltoQjHUgIPGaKJJK93'
 });
 var stream = twitter.stream('statuses/filter', {'locations':'-180,-90,180,90'})
 stream.on('tweet', function(tweet){
@@ -128,11 +133,59 @@ stream.on('tweet', function(tweet){
                         console.log(err);
                     }
                 });
+            
+// Create an instance of our SQS Client.
+var sqs = new aws.SQS({
+    region: 'us-east-1',//config.aws.region,
+    accessKeyId: 'AKIAJ6SNL5URRAILJOKQ',//config.aws.accessID,
+    secretAccessKey: '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',//config.aws.secretKey,
+
+    // For every request in this demo, I'm going to be using the same QueueUrl; so,
+    // rather than explicitly defining it on every request, I can set it here as the
+    // default QueueUrl to be automatically appended to every request.
+    params: {
+        QueueUrl: 'https://sqs.us-east-1.amazonaws.com/202100215321/que1' 
+        //config.aws.queueUrl
+    }
+});
+
+// Proxy the appropriate SQS methods to ensure that they "unwrap" the common node.js
+// error / callback pattern and return Promises. Promises are good and make it easier to
+// handle sequential asynchronous data.
+var sendMessage = Q.nbind( sqs.sendMessage, sqs );
+//JS file to fetch messages from Queue
+var checkMessage = require('./tryQ');
+
+// ---------------------------------------------------------- //
+// ---------------------------------------------------------- //
+
+
+// Now that we have a Q-ified method, we can send the message.
+sendMessage({
+    MessageBody: tweet['text']
+})
+.then(
+    function handleSendResolve( data ) {
+
+        console.log( chalk.green( "Message sent:", data.MessageId ) );
+
+    }
+)
+
+// Catch any error (or rejection) that took place during processing.
+.catch(
+    function handleReject( error ) {
+
+        console.log( chalk.red( "Unexpected Error:", error.message ) );
+
+    }
+);
 
                 var outputPoint = {"lat":tweet['geo']['coordinates']['0'],"lng": tweet['geo']['coordinates']['1']};
                 io.sockets.emit('twitter-stream', {geo:outputPoint,cat:category}); 
 
-            if(count[category]== 30){
+
+            if(count[category]== 28){
                 count[category]=0;
                 getTweets(category);
             }
@@ -140,6 +193,8 @@ stream.on('tweet', function(tweet){
     }
 });
 
+var tr=require('./newtrends.js');    
+    
 var Str='';
 function getTweets(cat){
     console.log("getTweets"+ cat);
@@ -156,58 +211,44 @@ function getTweets(cat){
     });       
 };
 
+    
+    
+    
+    
+    
 function entities(Str,cat){
     var output={};
-    //Str=Str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
-	alchemyapi.entities('text', Str,{ 'sentiment':1 },           function(response) {
-        console.log('========================================');
-        console.log(response);
-    output['entities'] = { text:Str,    response:JSON.stringify(response,null,5),               results:response['entities'] };
-    if (typeof(response['entities'])==="undefined" || response['entities'].length == 0){
-            console.log('------------------------------');
-            console.log(response);
-                return;
-    }
-    console.log(response['entities']);
-    response['entities'].sort(function(a, b) {
-        return parseFloat(b.count) - parseFloat(a.count);
+    alchemyapi.sentiment('text', Str, {}, function(response) {
+    output['sentiment'] = { text:Str, response:JSON.stringify(response,null,4), results:response['sentiment'] };
+    console.log('========================================');
+     //while(response == null || response === undefined );
+    console.log(response['docSentiment']);  
+    if( typeof(response['docSentiment']) === "undefined" )
+    return;
+    s=response['docSentiment']['type'];
+    console.log(response['docSentiment']['type']);
+        
+    var dbval=
+        {
+            category : cat,
+            senti : s
+        };
+    
+    Sentiment.remove({'category':cat}, function(err){
+        if(!err){
+            console.log("success");
+        }
     });
-    for (j=0 ; j<5 && j<response["entities"].length; j++){
-        console.log("=====",j);
-        var s='';
-        //if(response['entities'][j]['type']!='City'){
-        //console.log(response['entities'][j]['text']);//}  
-  if (typeof(response['entities'][j]['sentiment'])==="undefined"){
-                 s="neutral";
-             }
-                else{
-                s = response['entities'][j]['sentiment']['type'];
-                }
-            
-        var dbVal =
-             {
-                    category : cat,
-                    trend : response['entities'][j]['text'],
-                    senti : s
-             };
-            Trend.remove({'category':cat}, function(err){
-                    if(!err){
-                        
-                        console.log("success");
-                    }    
+            Sentiment.create(dbval, function(err){
+        if(err){
+            console.log(err);
+        }
             });
-            Trend.create(dbVal, function(err){
-                    if(err){
-                        console.log(err);
-                    }                    
-                });
-        //} //if
-    } //for
+            
+    
+ //for
     });
-}   
-    
-    
-    
+};
 };
           //  socket.emit('twitter-stream', {geo:outputPoint,cat:globalCategory});
 //    socket.emit("connected");

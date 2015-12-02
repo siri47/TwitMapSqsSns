@@ -71,6 +71,14 @@ if(io !== undefined) {
 
 
     });
+    socket.on('sentiment',function(data){
+        var dispData = data.m;
+        console.log("new new");
+        console.log(dispData.Message);
+        var senti = '- ' + dispData.Message.split(' ')[0].toUpperCase() + '';
+        var message = ''+dispData.Message.slice( dispData.Message.search(' ') + 1) + '';
+        $.snackbar({content:message+' '+senti});
+    });
 };
 
 category="sports";
@@ -91,30 +99,38 @@ $.get("/api/getAllTweets/"+category,function(data, status){
         //console.log(pointArray);
 var trends=[]
 var sentiment=[]
+var mydiv1=document.getElementById('overallSentiment');
+var newcontent1 = document.createElement('div');
+mydiv1.innerHTML='';
+$.get("/api/getSenti/"+category,function(data,status){
+    console.log("sentiment printing");
+    console.log(data);
+    sentiment=data[0]['senti'];
+        newcontent1.innerHTML = "<b>"+sentiment+"</i><br><hr>";
+        while (newcontent1.firstChild) {
+        mydiv1.appendChild(newcontent1.firstChild);
+    }
+});
 var mydiv=document.getElementById('trending');
 var newcontent = document.createElement('div');
 mydiv.innerHTML='';
-$.get("/api/getTrends/"+category,function(data,status){
+$.get("/api/getTrends/",function(data,status){
+    console.log("Trends printing");
     console.log(data);
-      for (i in data){
-          console.log(data[i]);
-        trends[i]= data[i]['trend'];
-        sentiment[i]=data[i]['senti'];
-        if (trends[i].length<2) continue;
-        newcontent.innerHTML = "<b>"+trends[i]+"</b><br/><i> "+sentiment[i]+"</i><br><hr>";
+    for ( i in data){
+        console.log(data[i]);
+        trends[i]=data[i]['text'];
+        newcontent.innerHTML = "<b>"+trends[i]+"</i><br><hr>";
         while (newcontent.firstChild) {
         mydiv.appendChild(newcontent.firstChild);
     }
 }
-
-
-    
-
 });
-    
-    
-
-
 };
+    
+    
+
+
+
 
 
