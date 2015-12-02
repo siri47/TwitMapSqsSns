@@ -1,6 +1,6 @@
 {
-  "name": "twitmap",
-  "main": "server.js",
+  "name": "TwitMapSqsSns",
+  "main": "serverSQS.js",
   "dependencies": {
     "aws-snsclient": "^0.2.0",
     "body-parser": "~1.0.1",
