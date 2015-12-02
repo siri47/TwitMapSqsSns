@@ -59,9 +59,9 @@ var Sentiment = require('./app/models/senti');
 var Trends= require('./app/models/trend');
 var twitt = require('twit'),
     
-twitter = new twitt({consumer_key: 'w6hHJEscClitn7VNY59n086Wk',              consumer_secret:'IpGHYeSghW7YOkYHg1fhr8nau0uNoIi70nRByeaKfh0121m7zm',
-access_token: '218786916-aW57bL8LW2JkS3psB5ChOH8j6xC7dO6LQOID11oU',	
-access_token_secret: '4YdgpQ7Xdabsk42mQNDTrqkVbnyltoQjHUgIPGaKJJK93'
+twitter = new twitt({consumer_key: '',              consumer_secret:'',
+access_token: '',	
+access_token_secret: ''
 });
 var stream = twitter.stream('statuses/filter', {'locations':'-180,-90,180,90'})
 stream.on('tweet', function(tweet){
@@ -137,8 +137,8 @@ stream.on('tweet', function(tweet){
 // Create an instance of our SQS Client.
 var sqs = new aws.SQS({
     region: 'us-east-1',//config.aws.region,
-    accessKeyId: 'AKIAJ6SNL5URRAILJOKQ',//config.aws.accessID,
-    secretAccessKey: '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',//config.aws.secretKey,
+    accessKeyId: '',//config.aws.accessID,
+    secretAccessKey: '',//config.aws.secretKey,
 
     // For every request in this demo, I'm going to be using the same QueueUrl; so,
     // rather than explicitly defining it on every request, I can set it here as the

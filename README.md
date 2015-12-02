@@ -1,4 +1,4 @@
-Project link : https://github.com/pkavya8/TwitMap
+Project link : https://github.com/siri47/TwitMapSqsSns
 UNI : 
 sh3451
 kp2652
@@ -12,7 +12,7 @@ Heroku is a cloud platform as a service supporting several programming languages
 
 Server:
 NodeJS is used for server side environment.
-server.js is the main server file.
+serverSQS.js is the main server file.
 
 Frontend:
 HTML, CSS(Material Design Lite) and Java Script.  
@@ -43,6 +43,13 @@ The geo enabled tweets are put into mongodb hosted on Heroku ( a cloud environme
 
 We categorize the tweets into 4 categories : sports, movies, technology and politics using a bag of words for each category. 
 
+Once the tweet is received, it is put into the SQS queue.
+A thread pool of 10 threads is created. Any available thread is made to receive the SQS message. The body of this SQS message is the tweet text. This message body is sent as input to AlchemyAPI for sentiment analysis. The result is published as a message to an SNS topic.
+
+There is a SNS subscriber which is called on the server-side which receives the sentiment of the tweet text. This information of tweet and sentiment is sent over the web socket to be displayed on the UI.
+
+We have used Tweet trends/places API to get the trending tweets. We also display the overall sentiment for every category.
+
 The front end is coded in HTML, CSS and JavaScript. 
 
 We use the google map API to show the distribution of tweets. We access the records from db and plot it as a heat map. 
@@ -50,7 +57,6 @@ We use the google map API to show the distribution of tweets. We access the reco
 The live tweets obtained are sent through sockets to the front end and appear as markers on the heat map. This is so that we can clearly see the new arriving tweets. 
 
 In order to find trends amongst the tweets, we use Alchemy API. We use entity extraction and sentiment extraction and update the results for each category on the web page.
-
 
 Deploying on AWS Elastic BeanStalk:
 
@@ -67,6 +73,8 @@ eb deploy
 Now go to your environment dashboard and access the web page by clicking the link next to the title.
 
 
-
-*Used one of the starting templates from Material Design Lite frameowork ( A CSS framework for material design by Google ).
+Materials used -
+1. Used one of the starting templates from Material Design Lite frameowork ( A CSS framework for material design by Google ).
 https://github.com/google/material-design-lite
+2. http://www.codingdefined.com/2015/09/how-to-fetch-trending-tweets-in-nodejs.html
+
