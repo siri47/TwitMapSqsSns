@@ -2,13 +2,17 @@
   "name": "TwitMapSqsSns",
   "main": "serverSQS.js",
   "dependencies": {
+    "aws-sdk": "^2.2.20",
     "aws-snsclient": "^0.2.0",
     "body-parser": "~1.0.1",
+    "chalk": "^1.1.1",
     "express": "~4.8.0",
     "mongoose": "latest",
+    "q": "^1.4.1",
     "sleep": "^3.0.0",
     "socket.io": "*",
     "twit": "^2.1.0",
-    "twitter": "^1.2.5"
+    "twitter": "^1.2.5",
+    "webworker-threads": "^0.6.2"
   }
 }
